@@ -1,0 +1,48 @@
+#+PROPERTY: header-args:sh :noeval
+
+* Nix (Flakes) based Zynqmp Qemu Development Environment
+
+** Prerequisites
+
+1. You'll need a working Nix Flakes setup. If you are using NixOS, you can enable Nix Flakes feature by following [[https://nixos.wiki/wiki/Flakes][this]] link. You can also setup Nix Flakes on non-NixOS distro such as Ubuntu by following [[https://github.com/rajivr/bootstrap-minimal-nix][this]] link.
+
+2. Next you'll need to download /Zynq UltraScale+ MPSoC Board Support Packages - 2020.1/ from Xilinx website. [[https://www.xilinx.com/support/download/index.html/content/xilinx/en/downloadNav/embedded-design-tools/2020-1.html][Here]] is the link. Please download the file called =ZCU102 BSP=. The downloaded file should have the following checksum.
+
+   #+begin_src sh
+     $ sha256sum xilinx-zcu102-v2020.1-final.bsp
+     2045c3b6421ec34d7e943f2227c40e42beb83b65ec67b0128e81c3ac19d000f0  xilinx-zcu102-v2020.1-final.bsp
+   #+end_src
+
+** Getting Started
+
+1. Rename the downloaded BSP file and add it to the Nix store.
+
+   #+begin_src sh
+     mv xilinx-zcu102-v2020.1-final.bsp xilinx-zcu102-v2020.1-final.tar.gz
+
+     nix-store --add-fixed sha256 ./xilinx-zcu102-v2020.1-final.tar.gz
+   #+end_src
+
+2. Enable ViryaOS Cachix repository.
+
+   #+begin_src sh
+     nix shell nixpkgs#cachix -c cachix use viryaos
+   #+end_src
+
+   This will update =~/.config/nix/nix.conf=.
+
+3. You are all set. You can now =cd= into this directory and start your development shell using =nix develop=.
+
+   #+begin_src sh
+     cd zynqmp-qemu-devenv/
+
+     nix develop
+
+     which qemu-system-aarch64
+   #+end_src
+
+   Inside your development shell, you can access the BSP binary blobs using the =XILINX_ZCU102_BINARY_BLOB_PATH= environment variable.
+
+   #+begin_src sh
+     echo $XILINX_ZCU102_BINARY_BLOB_PATH
+   #+end_src
